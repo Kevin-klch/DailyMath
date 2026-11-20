@@ -63,18 +63,8 @@
             </nav>
         </article>
 
-        {{-- Seitenleiste: Inhalt dieser Seite + weitere Themen der Kategorie --}}
+        {{-- Seitenleiste: weitere Themen der Kategorie, darunter der Inhalt dieser Seite --}}
         <aside class="flex flex-col gap-8 lg:sticky lg:top-6">
-            @if (count($article['headings']) > 1)
-                <nav aria-labelledby="toc-title">
-                    <h2 id="toc-title" class="label">{{ __('On this page') }}</h2>
-                    <ol class="mt-3 flex flex-col gap-1.5 border-l border-white/10 text-sm">
-                        @foreach ($article['headings'] as $heading)
-                            <li><a href="#{{ $heading['id'] }}" class="-ml-px block border-l border-transparent pl-3 text-ink-400 transition hover:border-accent-500 hover:text-white">{{ $heading['title'] }}</a></li>
-                        @endforeach
-                    </ol>
-                </nav>
-            @endif
 
             <nav aria-labelledby="siblings-title">
                 <h2 id="siblings-title" class="label">{{ $category->label() }}</h2>
@@ -90,6 +80,17 @@
                     @endforeach
                 </ol>
             </nav>
+
+            @if (count($article['headings']) > 1)
+                <nav aria-labelledby="toc-title" data-katex>
+                    <h2 id="toc-title" class="label">{{ __('On this page') }}</h2>
+                    <ol class="mt-3 flex flex-col gap-1.5 border-l border-white/10 text-sm">
+                        @foreach ($article['headings'] as $heading)
+                            <li><a href="#{{ $heading['id'] }}" class="-ml-px block border-l border-transparent pl-3 text-ink-400 transition hover:border-accent-500 hover:text-white">{{ $heading['title'] }}</a></li>
+                        @endforeach
+                    </ol>
+                </nav>
+            @endif
         </aside>
     </div>
 </x-layouts.learn>
