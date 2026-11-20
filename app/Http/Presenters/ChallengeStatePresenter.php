@@ -4,8 +4,10 @@ namespace App\Http\Presenters;
 
 use App\Enums\AttemptStatus;
 use App\Enums\CheckStatus;
+use App\Learn\LearnRepository;
 use App\Models\ChallengeAttempt;
 use App\Models\DailyChallenge;
+use App\Models\Question;
 use App\Models\QuestionHint;
 use App\Questions\AnswerTypes\CheckResult;
 use App\Services\DailyChallengeService;
@@ -24,6 +26,7 @@ class ChallengeStatePresenter
     public function __construct(
         private StatisticsService $statistics,
         private DailyChallengeService $daily,
+        private LearnRepository $learn,
     ) {}
 
     /**
@@ -56,6 +59,7 @@ class ChallengeStatePresenter
                     ->values(),
                 'placeholder' => $meta['placeholder'] ?? null,
                 'unit' => $meta['unit'] ?? null,
+                'learn' => $this->learnLinks($question),
             ],
             'attempt' => [
                 'status' => $attempt->status->value,
@@ -121,6 +125,25 @@ class ChallengeStatePresenter
             ->get();
 
         return $day->each(fn (DailyChallenge $c) => $c->setRelation('visitorAttempt', $c->attempts->first()));
+    }
+
+    /**
+     * Passende Lernartikel zur Aufgabe (Titel in der aktuellen Sprache); unbekannte Slugs werden übersprungen.
+     *
+     * @return list<array{slug: string, title: string, url: string}>
+     */
+    private function learnLinks(Question $question): array
+    {
+        return collect($question->learn_topics ?? [])
+            ->map(fn (string $slug) => $this->learn->meta($slug))
+            ->filter()
+            ->map(fn (array $article) => [
+                'slug' => $article['slug'],
+                'title' => $article['title'],
+                'url' => route('learn.show', $article['slug']),
+            ])
+            ->values()
+            ->all();
     }
 
     /**

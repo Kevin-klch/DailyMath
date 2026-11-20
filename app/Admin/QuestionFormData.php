@@ -37,6 +37,7 @@ final class QuestionFormData
                 'de' => ['title' => '', 'prompt' => '', 'solution' => '', 'background' => '', 'placeholder' => ''],
                 'answer' => ['value' => '', 'tolerance' => '', 'values' => '', 'pairs' => '', 'options' => '', 'choice' => ''],
                 'unit' => '',
+                'learn' => [],
                 'hints' => [
                     ['stage' => 'nudge', 'en' => '', 'de' => ''],
                     ['stage' => 'approach', 'en' => '', 'de' => ''],
@@ -75,6 +76,7 @@ final class QuestionFormData
                 'choice' => (string) ($answer['choice'] ?? ''),
             ],
             'unit' => $meta['unit'] ?? '',
+            'learn' => $question->learn_topics ?? [],
             'hints' => $question->hints->map(fn ($hint) => [
                 'stage' => (HintStage::fromLabel($hint->label) ?? HintStage::Nudge)->value,
                 'en' => $hint->content,
@@ -150,6 +152,7 @@ final class QuestionFormData
             'answer_meta' => $meta ?: null,
             'is_active' => (bool) ($data['is_active'] ?? false),
             'translations' => $german ? ['de' => $german] : null,
+            'learn_topics' => array_values(array_unique(array_filter((array) ($data['learn'] ?? [])))) ?: null,
             ...array_map(fn ($v) => is_string($v) ? trim($v) : $v, array_intersect_key($data['en'], array_flip(self::TEXT_FIELDS))),
         ];
     }

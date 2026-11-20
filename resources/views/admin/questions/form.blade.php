@@ -191,6 +191,22 @@
                     </div>
                 </section>
 
+                {{-- Passende Lernartikel --}}
+                <section class="card p-5">
+                    <h2 class="label">Zum Nachlesen</h2>
+                    <p class="mt-2 text-xs text-ink-500">Lernartikel, die bei der Aufgabe und im Ergebnis verlinkt werden (bis zu 5). Mit Strg/⌘ mehrere auswählen.</p>
+                    <select name="learn[]" multiple x-model="form.learn" size="10" class="input mt-3 !py-2 !text-sm !font-normal">
+                        @foreach (app(\App\Learn\LearnRepository::class)->byCategory() as $categoryKey => $articles)
+                            <optgroup label="{{ \App\Learn\LearnCategory::from($categoryKey)->label() }}">
+                                @foreach ($articles as $article)
+                                    <option value="{{ $article['slug'] }}">{{ $article['title'] }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                    <p class="mt-2 text-xs text-ink-400" x-show="form.learn.length">Ausgewählt: <span x-text="form.learn.length"></span></p>
+                </section>
+
                 {{-- Hinweise --}}
                 <section class="card p-5">
                     <div class="flex items-center justify-between">

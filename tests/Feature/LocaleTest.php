@@ -127,6 +127,21 @@ class LocaleTest extends TestCase
     }
 
     #[Test]
+    public function puzzles_link_to_learn_articles_in_the_current_language(): void
+    {
+        Question::first()->update(['learn_topics' => ['adding-fractions', 'does-not-exist']]);
+
+        $this->getJson('/challenge/leicht')
+            ->assertJsonCount(1, 'challenge.learn')
+            ->assertJsonPath('challenge.learn.0.title', 'Adding and Subtracting Fractions')
+            ->assertJsonPath('challenge.learn.0.url', route('learn.show', 'adding-fractions'));
+
+        $this->withCredentials()->withCookie(config('dailymath.locale_cookie'), 'de')
+            ->getJson('/challenge/leicht')
+            ->assertJsonPath('challenge.learn.0.title', 'Brüche addieren und subtrahieren');
+    }
+
+    #[Test]
     public function unknown_languages_are_rejected(): void
     {
         $this->post('/locale', ['locale' => 'xx'])->assertSessionHasErrors('locale');

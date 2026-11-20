@@ -46,7 +46,10 @@ class QuestionSeeder extends Seeder
             array_push($questions, ...require $file);
         }
 
-        return $questions;
+        // Passende Lernartikel ergänzen (database/seeders/data/learn-links.php)
+        $links = require __DIR__.'/data/learn-links.php';
+
+        return array_map(fn (array $q) => [...$q, 'learn' => $q['learn'] ?? $links[$q['slug']] ?? []], $questions);
     }
 
     /**
@@ -64,6 +67,7 @@ class QuestionSeeder extends Seeder
             'answer_type' => $data['answer_type'],
             'answer' => $data['answer'],
             'answer_meta' => array_filter([...($data['answer_meta'] ?? []), 'placeholder' => $en['placeholder'] ?? null]) ?: null,
+            'learn_topics' => ($data['learn'] ?? []) ?: null,
             'translations' => ['de' => array_filter([
                 ...array_intersect_key($de, array_flip(self::TEXT_FIELDS)),
                 'answer_meta' => isset($de['placeholder']) ? ['placeholder' => $de['placeholder']] : null,

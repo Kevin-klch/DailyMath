@@ -45,6 +45,7 @@ class AdminTest extends TestCase
             'de' => ['title' => 'Die Hälfte eines Drittels', 'prompt' => 'Berechne $$\frac12 \cdot \frac13$$', 'solution' => '$\frac16$', 'background' => '', 'placeholder' => 'z. B. 1/4'],
             'answer' => ['value' => '1/6', 'tolerance' => '', 'values' => '', 'pairs' => '', 'options' => '', 'choice' => ''],
             'unit' => '',
+            'learn' => ['multiplying-fractions', 'fractions-basics'],
             'hints' => [
                 ['stage' => 'nudge', 'en' => 'Multiply numerators and denominators.', 'de' => 'Zähler mal Zähler, Nenner mal Nenner.'],
                 ['stage' => 'almost', 'en' => '$\frac{1 \cdot 1}{2 \cdot 3}$', 'de' => ''],
@@ -96,6 +97,8 @@ class AdminTest extends TestCase
         $this->assertSame('Die Hälfte eines Drittels', $question->translations['de']['title']);
         $this->assertSame(['placeholder' => 'z. B. 1/4'], $question->translations['de']['answer_meta']);
 
+        $this->assertSame(['multiplying-fractions', 'fractions-basics'], $question->learn_topics);
+
         $this->assertCount(2, $question->hints);
         $this->assertSame('Nudge', $question->hints[0]->label);
         $this->assertSame('Denkanstoß', $question->hints[0]->translations['de']['label']);
@@ -119,6 +122,9 @@ class AdminTest extends TestCase
 
         $this->admin()->post('/admin/questions', $this->validForm(['en' => ['title' => '']]))
             ->assertSessionHasErrors('en.title');
+
+        $this->admin()->post('/admin/questions', $this->validForm(['learn' => ['no-such-article']]))
+            ->assertSessionHasErrors('learn.0');
 
         $this->assertSame(0, Question::count());
     }

@@ -7,6 +7,7 @@ use App\Enums\AnswerType;
 use App\Enums\Difficulty;
 use App\Enums\HintStage;
 use App\Enums\Topic;
+use App\Learn\LearnRepository;
 use App\Math\ExpressionParser;
 use App\Models\Question;
 use Illuminate\Foundation\Http\FormRequest;
@@ -69,6 +70,9 @@ class QuestionRequest extends FormRequest
             'answer' => ['array'],
             'answer.*' => ['nullable', 'string', 'max:2000'],
             'unit' => ['nullable', 'string', 'max:12'],
+
+            'learn' => ['array', 'max:5'],
+            'learn.*' => ['string', Rule::in(app(LearnRepository::class)->all('en')->pluck('slug'))],
 
             'hints' => ['array', 'max:4'],
             'hints.*.stage' => ['required', Rule::enum(HintStage::class)],

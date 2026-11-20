@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['slug', 'title', 'prompt', 'topic', 'difficulty', 'answer_type', 'answer', 'answer_meta', 'solution', 'background', 'translations', 'is_active'])]
+#[Fillable(['slug', 'title', 'prompt', 'topic', 'difficulty', 'answer_type', 'answer', 'answer_meta', 'solution', 'background', 'learn_topics', 'translations', 'is_active'])]
 class Question extends Model
 {
     /** @use HasFactory<QuestionFactory> */
@@ -27,6 +27,7 @@ class Question extends Model
             'answer_type' => AnswerType::class,
             'answer' => 'array',
             'answer_meta' => 'array',
+            'learn_topics' => 'array',
             'is_active' => 'boolean',
         ];
     }

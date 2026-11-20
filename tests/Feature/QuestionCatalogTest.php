@@ -96,6 +96,20 @@ class QuestionCatalogTest extends TestCase
     }
 
     #[Test]
+    public function every_puzzle_links_to_existing_learn_articles(): void
+    {
+        $articles = glob(resource_path('learn/en').'/*.md');
+        $slugs = array_map(fn ($f) => basename($f, '.md'), $articles);
+
+        foreach ($this->catalog() as $q) {
+            $this->assertNotEmpty($q['learn'], "{$q['slug']}: keine Lernartikel verknüpft");
+            foreach ($q['learn'] as $article) {
+                $this->assertContains($article, $slugs, "{$q['slug']}: Lernartikel „{$article}“ existiert nicht");
+            }
+        }
+    }
+
+    #[Test]
     public function multiple_choice_answers_point_to_an_existing_option(): void
     {
         foreach ($this->catalog() as $q) {

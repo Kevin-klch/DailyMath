@@ -117,6 +117,18 @@
                 <h1 class="mt-3 font-serif text-2xl font-semibold sm:text-[2rem]" x-text="state.challenge.title"></h1>
 
                 <div class="math-content task-prompt mt-4 text-xl leading-relaxed text-ink-300 sm:text-[1.35rem]" x-math="state.challenge.prompt"></div>
+
+                {{-- Passende Lernartikel (öffnen in neuem Tab, damit Eingabe und Notizen bleiben) --}}
+                <div x-show="state.challenge.learn.length" class="mt-5 flex flex-wrap items-center gap-2">
+                    <span class="label mr-1">{{ __('Read up') }}</span>
+                    <template x-for="link in state.challenge.learn" :key="link.slug">
+                        <a :href="link.url" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 text-sm text-ink-300 transition hover:border-accent-500/50 hover:text-white">
+                            <svg viewBox="0 0 24 24" class="size-3.5 text-accent-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+                            <span x-text="link.title"></span>
+                            <span class="text-ink-500" aria-hidden="true">↗</span>
+                        </a>
+                    </template>
+                </div>
             </article>
 
             {{-- Umschalter Antwort/Notizblock (nur mobil) --}}
@@ -321,6 +333,21 @@
                                 <div class="mt-4 border-l-2 border-accent-500/60 pl-4">
                                     <p class="font-serif text-[1.05rem] font-semibold text-white italic">{{ __('Remark.') }}</p>
                                     <div class="math-content mt-1 text-[1.05rem] leading-relaxed text-ink-300" x-math="state.result.background"></div>
+                                </div>
+                            </template>
+
+                            <template x-if="state.challenge.learn.length">
+                                <div class="mt-6 border-t border-white/8 pt-4">
+                                    <p class="label">{{ __('Learn more') }}</p>
+                                    <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                                        <template x-for="link in state.challenge.learn" :key="link.slug">
+                                            <a :href="link.url" target="_blank" rel="noopener" class="group flex items-center gap-2 rounded-lg border border-white/8 bg-ink-950 px-4 py-3 transition hover:border-accent-500/40">
+                                                <svg viewBox="0 0 24 24" class="size-4 text-accent-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+                                                <span class="font-serif text-lg group-hover:text-accent-400" x-text="link.title"></span>
+                                                <span class="ml-auto text-ink-500" aria-hidden="true">↗</span>
+                                            </a>
+                                        </template>
+                                    </div>
                                 </div>
                             </template>
                         </div>
