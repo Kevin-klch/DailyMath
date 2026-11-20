@@ -4,17 +4,20 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    /* Serifenschrift im LaTeX-Stil für Aufgaben und Lösungen, Monospace für Beschriftungen und Zahlen */
+    --font-serif: 'STIX Two Text', 'Cambria Math', Georgia, serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    /* Dunkle Fläche wie in der Designvorlage */
-    --color-ink-950: #0d0d12;
-    --color-ink-900: #14141b;
-    --color-ink-850: #191921;
-    --color-ink-800: #1f1f29;
-    --color-ink-700: #2b2b37;
-    --color-ink-500: #5d5d6e;
-    --color-ink-400: #8d8d9d;
-    --color-ink-300: #b9b9c6;
+    /* Nachtblaues Schwarz – wie eine Tafel bzw. ein Mathe-Heft bei Nacht */
+    --color-ink-950: #111216;
+    --color-ink-900: #18191e;
+    --color-ink-850: #1d1e24;
+    --color-ink-800: #24252c;
+    --color-ink-700: #2f3038;
+    --color-ink-500: #6c6e73;
+    --color-ink-400: #9b9da2;
+    --color-ink-300: #c5c7cb;
 
     /* Orange Akzentfarbe */
     --color-accent-300: #ffc679;
@@ -29,10 +32,21 @@
 @layer base {
     html {
         color-scheme: dark;
+        /* Platz für die Scrollleiste immer reservieren – sonst springt die Breite, wenn die Seite
+           je nach Aufgabe mal länger und mal kürzer als der Bildschirm ist. */
+        scrollbar-gutter: stable;
     }
 
     body {
         @apply bg-ink-950 text-white antialiased;
+        /* Karopapier im Hintergrund, nach unten hin ausblendend */
+        background-image:
+            linear-gradient(to bottom, transparent, var(--color-ink-950) 85%),
+            linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+        background-size: 100% 100vh, 28px 28px, 28px 28px;
+        background-repeat: no-repeat, repeat, repeat;
+        background-attachment: fixed;
     }
 
     [x-cloak] {
@@ -42,15 +56,26 @@
 
 /* Wiederverwendbare Bausteine (als Utilities, damit sie per @apply kombinierbar sind) */
 @utility card {
-    @apply rounded-3xl border border-white/10 bg-ink-900;
+    @apply rounded-xl border border-white/8 bg-ink-900;
+}
+
+/* Kleine Beschriftung in Monospace, z. B. „PROBLEM № 1“ */
+@utility label {
+    @apply font-mono text-[0.68rem] font-medium tracking-[0.18em] text-ink-500 uppercase;
 }
 
 @utility chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-white/12 px-3 py-1 text-xs font-semibold text-ink-300;
+    @apply inline-flex items-center gap-1.5 rounded-md bg-ink-900 px-2.5 py-1 text-xs font-medium text-ink-300;
+}
+
+@utility icon-btn {
+    @apply grid size-10 place-items-center rounded-full border border-white/20 text-ink-300 transition
+        hover:border-white/40 hover:text-white
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400;
 }
 
 @utility btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition
         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400
         disabled:cursor-not-allowed disabled:opacity-40;
 }
@@ -60,21 +85,57 @@
 }
 
 @utility btn-outline {
-    @apply btn border border-white/15 text-white hover:border-white/30 hover:bg-white/5;
+    @apply btn border border-white/15 text-white hover:border-white/30;
 }
 
 @utility btn-ghost {
     @apply btn text-ink-300 hover:bg-white/5 hover:text-white;
 }
 
+/* ---------------------------------------------------------------- Taschenrechner */
+
+@utility calc {
+    @apply rounded-xl border border-white/8 bg-ink-900 p-3;
+}
+
+@utility calc-display {
+    @apply rounded-lg border border-white/6 bg-ink-950 px-4 py-2.5;
+}
+
+@utility calc-input {
+    @apply w-full min-w-0 bg-transparent text-right font-mono text-3xl font-semibold tabular-nums text-white
+        placeholder:text-ink-700 focus:outline-none sm:text-3xl;
+    caret-color: var(--color-accent-500);
+}
+
+@utility calc-key {
+    @apply flex h-11 items-center justify-center rounded-lg bg-ink-800 font-mono text-lg font-medium text-white
+        transition select-none
+        hover:bg-ink-700 active:bg-ink-850
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400
+        disabled:cursor-not-allowed disabled:opacity-40;
+}
+
+@utility calc-key-op {
+    @apply text-accent-400;
+}
+
+@utility calc-key-fn {
+    @apply font-sans text-base text-ink-400;
+}
+
+@utility calc-key-eq {
+    @apply bg-accent-500 font-sans text-ink-950 hover:bg-accent-400 active:bg-accent-600 disabled:hover:bg-accent-500;
+}
+
 @utility input {
-    @apply w-full rounded-xl border border-white/15 bg-ink-950 px-4 py-3 text-lg font-semibold text-white
+    @apply w-full rounded-md border border-white/15 bg-ink-950 px-4 py-3 text-lg font-semibold text-white
         placeholder:font-normal placeholder:text-ink-500 transition
         focus:border-accent-500 focus:ring-2 focus:ring-accent-500/25 focus:outline-none;
 }
 
 @utility tool-btn {
-    @apply grid size-9 place-items-center rounded-lg text-ink-300 transition hover:bg-white/8 hover:text-white
+    @apply grid size-9 place-items-center rounded-md text-ink-300 transition hover:bg-white/8 hover:text-white
         disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent;
 
     &[aria-pressed='true'] {
@@ -101,17 +162,171 @@
         background-color: #fff;
     }
 
+    /* Rastergröße und Verschiebung kommen per CSS-Variablen vom Notizblock, damit das Papier mitzoomt. */
     .paper-grid {
         background-color: #fff;
         background-image:
             linear-gradient(to right, #dfe6f0 1px, transparent 1px),
             linear-gradient(to bottom, #dfe6f0 1px, transparent 1px);
-        background-size: 24px 24px;
+        background-size: var(--paper-grid, 24px) var(--paper-grid, 24px);
+        background-position: var(--paper-x, 0) var(--paper-y, 0);
     }
 
     .paper-lined {
         background-color: #fff;
         background-image: linear-gradient(to bottom, #dfe6f0 1px, transparent 1px);
-        background-size: 100% 32px;
+        background-size: 100% var(--paper-line, 32px);
+        background-position: 0 var(--paper-y, 0);
     }
+}
+
+/* ---------------------------------------------------------------- Feedback-Animationen */
+
+.calc {
+    transition: border-color 0.2s, box-shadow 0.3s;
+}
+
+.calc-correct {
+    border-color: var(--color-success-400);
+    animation: calc-bump 0.45s ease-out;
+}
+
+.calc-wrong {
+    border-color: color-mix(in oklab, var(--color-danger-400) 60%, transparent);
+    animation: calc-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.calc-wrong .calc-input {
+    color: var(--color-danger-400);
+}
+
+.calc-pop {
+    animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.result-pop {
+    animation: pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.result-check {
+    stroke-dasharray: 24;
+}
+
+.result-check-draw {
+    animation: draw-check 0.45s 0.25s ease-out both;
+}
+
+.result-stagger > * {
+    animation: rise 0.45s ease-out both;
+}
+
+.result-stagger > :nth-child(2) { animation-delay: 0.08s; }
+.result-stagger > :nth-child(3) { animation-delay: 0.16s; }
+.result-stagger > :nth-child(4) { animation-delay: 0.24s; }
+
+@keyframes calc-shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-7px); }
+    40%, 60% { transform: translateX(7px); }
+}
+
+@keyframes calc-bump {
+    40% { transform: scale(1.025); }
+}
+
+@keyframes pop {
+    from { opacity: 0; transform: scale(0.4); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes draw-check {
+    from { stroke-dashoffset: 24; }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .calc-correct, .calc-wrong, .calc-pop, .result-pop, .result-check-draw, .result-stagger > * {
+        animation: none;
+    }
+}
+
+/* ---------------------------------------------------------------- Aufgabenkarte */
+
+/* Mathematische Texte (Aufgabe, Hinweise, Lösung) in Serifenschrift – passend zu den KaTeX-Formeln */
+.math-content {
+    font-family: var(--font-serif);
+}
+
+/* Die Formel ist das Herz der Aufgabe: hell, eingerahmt von zwei feinen Linien wie eine
+   hervorgehobene Gleichung im Lehrbuch.
+   Mehrere Gleichungen untereinander (z. B. ein Gleichungssystem) teilen sich einen Rahmen. */
+.task-prompt p:has(.katex-display) {
+    @apply my-6 border-y border-white/10 py-5 text-white;
+    font-size: 1.2em;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.025) 50%, transparent);
+}
+
+.task-prompt p:has(.katex-display) .katex-display {
+    margin: 0.35em 0;
+}
+
+.task-prompt p:has(.katex-display) br {
+    display: none;
+}
+
+.task-prompt p:has(.katex-display):last-child {
+    @apply mb-1;
+}
+
+@media (min-width: 640px) {
+    .task-prompt p:has(.katex-display) {
+        font-size: 1.35em;
+    }
+}
+
+/* ---------------------------------------------------------------- Startbildschirm mit Karopapier */
+
+.intro-screen {
+    background-image:
+        radial-gradient(ellipse at center, transparent 20%, var(--color-ink-950) 75%),
+        linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+    background-size: 100% 100%, 28px 28px, 28px 28px;
+}
+
+/* ---------------------------------------------------------------- Animation: Notizblock breit/schmal */
+
+/* Jeder Bereich bekommt einen eigenen Namen, damit der Browser ihn beim Umbau weich an die neue Position gleiten lässt. */
+.vt-notepad { view-transition-name: notepad; }
+.vt-answer { view-transition-name: answer; }
+.vt-result { view-transition-name: result; }
+
+::view-transition-group(notepad),
+::view-transition-group(answer),
+::view-transition-group(result) {
+    animation-duration: 0.38s;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Inhalt nicht verzerren, sondern oben links verankert ein- bzw. ausblenden */
+::view-transition-old(notepad),
+::view-transition-new(notepad),
+::view-transition-old(answer),
+::view-transition-new(answer) {
+    width: 100%;
+    height: 100%;
+    object-fit: none;
+    object-position: left top;
+    overflow: clip;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.38s;
 }

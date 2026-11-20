@@ -1,4 +1,5 @@
 import Notepad from '../notepad/Notepad';
+import { t } from '../i18n';
 
 const PREFS_KEY = 'dailymath:notepad-prefs';
 const NOTES_PREFIX = 'dailymath:notes:';
@@ -29,12 +30,13 @@ export default (storageKey, keepPrefix = storageKey) => ({
     width: 3,
     paper: 'grid',
     canUndo: false,
+    zoom: 100,
     canRedo: false,
     isEmpty: true,
     sizes: [
-        { value: 2, dot: 4, label: 'Fein' },
-        { value: 3, dot: 6, label: 'Mittel' },
-        { value: 6, dot: 9, label: 'Dick' },
+        { value: 2, dot: 4, label: t('Fine') },
+        { value: 3, dot: 6, label: t('Medium') },
+        { value: 6, dot: 9, label: t('Thick') },
     ],
 
     init() {
@@ -48,6 +50,7 @@ export default (storageKey, keepPrefix = storageKey) => ({
         const pad = new Notepad(this.$refs.canvas, {
             storageKey,
             onChange: (p) => this.sync(p),
+            onViewChange: (p) => (this.zoom = Math.round(p.scale * 100)),
         });
         pad.setWidth(this.width);
         this.pad = () => pad;
@@ -101,13 +104,25 @@ export default (storageKey, keepPrefix = storageKey) => ({
         this.pad().clear();
     },
 
+    zoomIn() {
+        this.pad().zoomBy(1.25);
+    },
+
+    zoomOut() {
+        this.pad().zoomBy(0.8);
+    },
+
+    resetZoom() {
+        this.pad().resetView();
+    },
+
     async download() {
         const blob = await this.pad().toBlob(this.paper);
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         const link = Object.assign(document.createElement('a'), {
             href: url,
-            download: `dailymath-notizen-${new Date().toISOString().slice(0, 10)}.png`,
+            download: `dailymath-${t('notes')}-${new Date().toISOString().slice(0, 10)}.png`,
         });
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -127,6 +142,16 @@ export default (storageKey, keepPrefix = storageKey) => ({
             this.setTool('pen');
         } else if (!mod && e.key.toLowerCase() === 'e') {
             this.setTool('eraser');
+        } else if (!mod && e.key.toLowerCase() === 'f') {
+            this.toggleNotesWide(); // Methode der umgebenden Seiten-Komponente
+        } else if (!mod && e.key.toLowerCase() === 'h') {
+            this.setTool('hand');
+        } else if (!mod && (e.key === '+' || e.key === '=')) {
+            this.zoomIn();
+        } else if (!mod && e.key === '-') {
+            this.zoomOut();
+        } else if (!mod && e.key === '0') {
+            this.resetZoom();
         }
     },
 
