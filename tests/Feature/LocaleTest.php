@@ -99,7 +99,7 @@ class LocaleTest extends TestCase
         $this->seed(QuestionSeeder::class); // idempotent
 
         $questions = Question::with('hints')->get();
-        $this->assertCount(21, $questions);
+        $this->assertCount(count((new QuestionSeeder)->all()), $questions);
 
         foreach ($questions as $question) {
             foreach (['title', 'prompt', 'solution', 'background'] as $field) {

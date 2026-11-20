@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\AnswerType;
 use App\Enums\Difficulty;
+use App\Enums\HintStage;
 use App\Enums\Topic;
 use App\Models\Question;
 use Illuminate\Database\Seeder;
@@ -21,25 +22,31 @@ use RuntimeException;
  */
 class QuestionSeeder extends Seeder
 {
-    /**
-     * Die vier Stufen der Hinweise: [Englisch, Deutsch].
-     */
-    private const HINT_LABELS = [
-        'nudge' => ['Nudge', 'Denkanstoß'],
-        'approach' => ['Approach', 'Lösungsansatz'],
-        'help' => ['Concrete help', 'Konkrete Hilfestellung'],
-        'almost' => ['Almost the full solution', 'Fast vollständige Lösung'],
-    ];
-
     private const TEXT_FIELDS = ['title', 'prompt', 'solution', 'background'];
 
     public function run(): void
     {
         DB::transaction(function () {
-            foreach ($this->questions() as $data) {
+            foreach ($this->all() as $data) {
                 $this->store($data);
             }
         });
+    }
+
+    /**
+     * Startbestand plus die Aufgaben aus database/seeders/data/*.php.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function all(): array
+    {
+        $questions = $this->questions();
+
+        foreach (glob(__DIR__.'/data/questions-*.php') as $file) {
+            array_push($questions, ...require $file);
+        }
+
+        return $questions;
     }
 
     /**
@@ -74,7 +81,8 @@ class QuestionSeeder extends Seeder
 
         $question->hints()->delete();
         foreach (array_values($data['hints']) as $i => [$stage, $enContent, $deContent]) {
-            [$enLabel, $deLabel] = self::HINT_LABELS[$stage] ?? throw new RuntimeException("Unbekannte Hinweisstufe: {$stage}");
+            $hintStage = HintStage::tryFrom($stage) ?? throw new RuntimeException("Unbekannte Hinweisstufe: {$stage}");
+            [$enLabel, $deLabel] = [$hintStage->label('en'), $hintStage->label('de')];
 
             $question->hints()->create([
                 'position' => $i + 1,
