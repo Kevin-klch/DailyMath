@@ -4,6 +4,7 @@ use App\Enums\Difficulty;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\DevResetController;
+use App\Http\Controllers\LearnController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureVisitorId;
@@ -33,6 +34,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('tools/preview', [Admin\ToolsController::class, 'preview'])->name('tools.preview');
         Route::post('tools/check', [Admin\ToolsController::class, 'check'])->name('tools.check');
     });
+});
+
+// Lernbereich: Erklärungen zu Mathe-Themen
+Route::middleware(SetLocale::class)->prefix('learn')->name('learn.')->group(function () {
+    Route::get('/', [LearnController::class, 'index'])->name('index');
+    Route::get('{slug}', [LearnController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('show');
 });
 
 Route::middleware([EnsureVisitorId::class, SetLocale::class])->group(function () use ($levels) {

@@ -29,7 +29,12 @@
                         <p class="mt-0.5 text-ink-400">{{ __('No.') }} <span x-text="state.challenge.number">{{ $state['challenge']['number'] }}</span></p>
                     </div>
 
-                    <x-locale-switcher class="mt-8" />
+                    <a href="{{ route('learn.index') }}" class="mt-8 inline-flex items-center gap-2 text-sm text-ink-400 transition hover:text-white">
+                        <svg viewBox="0 0 24 24" class="size-4 text-accent-500" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+                        {{ __('Learn maths – topics explained') }}
+                    </a>
+
+                    <x-locale-switcher class="mt-4" />
                 </div>
             </div>
         @endif
@@ -61,6 +66,9 @@
                         </button>
                     </form>
                 @endif
+                <a href="{{ route('learn.index') }}" class="icon-btn" aria-label="{{ __('Learn') }}" title="{{ __('Learn') }}">
+                    <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>
+                </a>
                 <button type="button" class="icon-btn" @click="statsOpen = true" aria-label="{{ __('Show statistics') }}" title="{{ __('Statistics') }}">
                     <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>
                 </button>

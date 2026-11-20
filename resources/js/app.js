@@ -28,6 +28,9 @@ Alpine.directive('math', (el, { expression }, { evaluateLater, effect }) => {
     });
 });
 
+// Statisch gerenderte Inhalte (z. B. Lernartikel) einmalig mit KaTeX setzen
+document.querySelectorAll('[data-katex]').forEach((el) => renderMathInElement(el, KATEX_OPTIONS));
+
 Alpine.plugin(focus);
 Alpine.data('dailyChallenge', dailyChallenge);
 Alpine.data('notepad', notepad);

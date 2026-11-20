@@ -330,3 +330,109 @@
 ::view-transition-new(root) {
     animation-duration: 0.38s;
 }
+
+/* ---------------------------------------------------------------- Lernartikel */
+
+.learn-prose {
+    @apply font-serif text-[1.15rem] leading-relaxed text-ink-300;
+}
+
+.learn-prose > :first-child {
+    @apply mt-0;
+}
+
+.learn-prose p,
+.learn-prose ul,
+.learn-prose ol,
+.learn-prose .table-scroll,
+.learn-prose blockquote,
+.learn-prose details {
+    @apply my-5;
+}
+
+.learn-prose h2 {
+    @apply mt-12 mb-4 scroll-mt-6 font-serif text-[1.75rem] font-semibold text-white;
+}
+
+.learn-prose h3 {
+    @apply mt-8 mb-3 font-serif text-xl font-semibold text-white;
+}
+
+.learn-prose strong {
+    @apply font-semibold text-white;
+}
+
+.learn-prose a {
+    @apply text-accent-400 underline decoration-accent-500/40 underline-offset-2 hover:decoration-accent-400;
+}
+
+.learn-prose ul {
+    @apply list-disc pl-6 marker:text-accent-500;
+}
+
+.learn-prose ol {
+    @apply list-decimal pl-6 marker:font-mono marker:text-sm marker:text-accent-500;
+}
+
+.learn-prose li + li {
+    @apply mt-2;
+}
+
+.learn-prose hr {
+    @apply my-10 border-white/10;
+}
+
+.learn-prose code {
+    @apply rounded bg-ink-900 px-1.5 py-0.5 font-mono text-[0.85em] text-ink-300;
+}
+
+/* Merksätze und Hinweise */
+.learn-prose blockquote {
+    @apply rounded-lg border-l-2 border-accent-500 bg-ink-900 px-5 py-4 text-ink-300;
+}
+
+.learn-prose blockquote > :first-child {
+    @apply mt-0;
+}
+
+.learn-prose blockquote > :last-child {
+    @apply mb-0;
+}
+
+/* Lösungen zum Aufklappen */
+.learn-prose details {
+    @apply rounded-lg border border-white/10 bg-ink-900/60 px-4 py-3;
+}
+
+.learn-prose summary {
+    @apply cursor-pointer font-mono text-xs font-medium tracking-[0.15em] text-accent-400 uppercase select-none;
+}
+
+.learn-prose details[open] summary {
+    @apply mb-3;
+}
+
+.learn-prose details > :last-child {
+    @apply mb-0;
+}
+
+/* Tabellen */
+.learn-prose .table-scroll {
+    @apply overflow-x-auto;
+}
+
+.learn-prose table {
+    @apply w-full border-collapse text-base;
+}
+
+.learn-prose th {
+    @apply border-b border-white/15 px-3 py-2 text-left font-mono text-xs font-medium tracking-wider text-ink-400 uppercase;
+}
+
+.learn-prose td {
+    @apply border-b border-white/6 px-3 py-2 align-top;
+}
+
+.learn-prose .katex-display {
+    @apply my-6 overflow-x-auto overflow-y-hidden py-1 text-white;
+}
