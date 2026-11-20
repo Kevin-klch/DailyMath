@@ -18,13 +18,13 @@ class MultiValueAnswer extends AnswerChecker
             $raw = trim((string) ($values[$variable] ?? ''));
 
             if ($raw === '') {
-                return CheckResult::invalid("Bitte gib einen Wert für {$variable} an.");
+                return CheckResult::invalid(__('Please enter a value for :variable.', ['variable' => $variable]));
             }
 
             $value = $this->parseNumber($raw);
 
             if ($value === null) {
-                return CheckResult::invalid("Der Wert für {$variable} konnte nicht gelesen werden.");
+                return CheckResult::invalid(__('The value for :variable could not be read.', ['variable' => $variable]));
             }
 
             $allCorrect = $allCorrect && $value->equals($this->expectedValue($target), $tolerance);

@@ -31,6 +31,11 @@ return [
     'locale_cookie' => 'dailymath_locale',
 
     /*
+    | Passwort für die Aufgabenverwaltung unter /admin. Ohne Passwort ist der Bereich abgeschaltet (404).
+    */
+    'admin_password' => env('DAILYMATH_ADMIN_PASSWORD'),
+
+    /*
     | Übergangsweise Entwicklerwerkzeuge (z. B. der Reset-Button im Header).
     | Standardmäßig nur lokal aktiv – in Produktion nie einschalten.
     */

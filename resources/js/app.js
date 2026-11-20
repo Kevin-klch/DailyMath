@@ -4,6 +4,7 @@ import renderMathInElement from 'katex/contrib/auto-render';
 
 import dailyChallenge from './components/dailyChallenge';
 import notepad from './components/notepad';
+import questionForm from './components/questionForm';
 
 const KATEX_OPTIONS = {
     delimiters: [
@@ -30,6 +31,7 @@ Alpine.directive('math', (el, { expression }, { evaluateLater, effect }) => {
 Alpine.plugin(focus);
 Alpine.data('dailyChallenge', dailyChallenge);
 Alpine.data('notepad', notepad);
+Alpine.data('questionForm', questionForm);
 
 window.Alpine = Alpine;
 Alpine.start();

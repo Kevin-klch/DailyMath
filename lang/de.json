@@ -121,5 +121,7 @@
     "Reset zoom": "Zoom zurücksetzen",
     "Full width": "Volle Breite",
     "Normal width": "Normale Breite",
-    "Reset today's puzzles (dev)": "Heutige Aufgaben zurücksetzen (Dev)"
+    "Reset today's puzzles (dev)": "Heutige Aufgaben zurücksetzen (Dev)",
+    "Please enter a value for :variable.": "Bitte gib einen Wert für :variable an.",
+    "The value for :variable could not be read.": "Der Wert für :variable konnte nicht gelesen werden."
 }
