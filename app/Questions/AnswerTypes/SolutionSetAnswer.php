@@ -14,7 +14,7 @@ class SolutionSetAnswer extends AnswerChecker
         $parts = array_values(array_filter(array_map('trim', $parts), fn ($p) => $p !== ''));
 
         if ($parts === []) {
-            return CheckResult::invalid('Bitte gib die Lösungen getrennt durch ein Semikolon ein, z. B. 2; 3.');
+            return CheckResult::invalid(__('Please enter the solutions separated by a semicolon, e.g. 2; 3.'));
         }
 
         $values = [];
@@ -30,7 +30,7 @@ class SolutionSetAnswer extends AnswerChecker
         $tolerance = (float) ($expected['tolerance'] ?? 0.0);
 
         if (count($values) !== count($targets)) {
-            return CheckResult::incorrect(sprintf('Gesucht sind genau %d Lösungen.', count($targets)));
+            return CheckResult::incorrect(__('Exactly :count solutions are required.', ['count' => count($targets)]));
         }
 
         // Jede Lösung muss genau einem erwarteten Wert zugeordnet werden können.

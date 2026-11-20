@@ -29,7 +29,7 @@ class ChallengeController extends Controller
         }
 
         $challenge = $level !== null
-            ? ($day[Difficulty::fromSlug($level)?->value] ?? abort(404, 'Für dieses Niveau gibt es heute keine Aufgabe.'))
+            ? ($day[Difficulty::fromSlug($level)?->value] ?? abort(404, __('There is no challenge for this level today.')))
             : $this->firstOpenChallenge($day, $this->visitorId($request));
 
         $attempt = $this->play->attemptFor($challenge, $this->visitorId($request));
@@ -67,20 +67,13 @@ class ChallengeController extends Controller
         $input = $validated['answer'];
 
         if ((! is_string($input) && ! is_array($input)) || (is_string($input) && mb_strlen($input) > 200)) {
-            abort(422, 'Ungültige Antwort.');
+            abort(422, __('Invalid answer.'));
         }
 
         $attempt = $this->currentAttempt($request, $level);
         $check = $this->play->submit($attempt, $input);
 
         return response()->json($this->presenter->present($attempt->dailyChallenge, $attempt->refresh(), $check));
-    }
-
-    public function giveUp(Request $request, string $level): JsonResponse
-    {
-        $attempt = $this->play->giveUp($this->currentAttempt($request, $level));
-
-        return response()->json($this->presenter->present($attempt->dailyChallenge, $attempt));
     }
 
     /**
@@ -112,7 +105,7 @@ class ChallengeController extends Controller
     private function currentAttempt(Request $request, string $level): ChallengeAttempt
     {
         $difficulty = Difficulty::fromSlug($level) ?? abort(404);
-        $challenge = $this->daily->current($difficulty) ?? abort(404, 'Für dieses Niveau gibt es heute keine Aufgabe.');
+        $challenge = $this->daily->current($difficulty) ?? abort(404, __('There is no challenge for this level today.'));
 
         return $this->play->attemptFor($challenge, $this->visitorId($request))
             ->load('dailyChallenge.question.hints');

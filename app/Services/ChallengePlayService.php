@@ -43,7 +43,7 @@ class ChallengePlayService
         if ($attempt->isFinished()) {
             return new CheckResult(
                 $attempt->status === AttemptStatus::Solved ? CheckStatus::Correct : CheckStatus::Incorrect,
-                'Die heutige Aufgabe ist bereits abgeschlossen.',
+                __("Today's challenge is already finished."),
             );
         }
 
@@ -69,14 +69,5 @@ class ChallengePlayService
         $attempt->save();
 
         return $result;
-    }
-
-    public function giveUp(ChallengeAttempt $attempt): ChallengeAttempt
-    {
-        if (! $attempt->isFinished()) {
-            $attempt->update(['status' => AttemptStatus::GivenUp, 'finished_at' => now()]);
-        }
-
-        return $attempt;
     }
 }

@@ -7,7 +7,7 @@ class FractionAnswer extends AnswerChecker
     public function check(string|array $input, array $expected, array $meta = []): CheckResult
     {
         if (! is_string($input) || trim($input) === '') {
-            return CheckResult::invalid('Bitte gib einen Bruch oder eine Zahl ein.');
+            return CheckResult::invalid(__('Please enter a fraction or a number.'));
         }
 
         $value = $this->parseNumber($input);
@@ -24,7 +24,7 @@ class FractionAnswer extends AnswerChecker
 
         // Gerundete Dezimalzahl (z. B. 0,583 statt 7/12): fast richtig, aber nicht exakt.
         if ($value->equals($target, 0.001)) {
-            return CheckResult::incorrect('Fast! Gib das Ergebnis bitte exakt als Bruch an.');
+            return CheckResult::incorrect(__('Almost! Please give the exact result as a fraction.'));
         }
 
         return CheckResult::incorrect();

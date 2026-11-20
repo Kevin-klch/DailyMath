@@ -114,12 +114,18 @@ class PlayChallengeTest extends TestCase
     }
 
     #[Test]
-    public function giving_up_reveals_the_solution_without_counting_as_solved(): void
+    public function the_solution_can_only_be_unlocked_by_solving(): void
     {
-        $this->visitor()->postJson('/challenge/leicht/give-up')
-            ->assertJsonPath('attempt.status', 'given_up')
-            ->assertJsonPath('result.solved', false)
-            ->assertJsonPath('stats.current_streak', 0);
+        // Auch nach allen Hinweisen gibt es keine Lösung – und keinen Weg zum Aufgeben.
+        foreach (range(1, 4) as $i) {
+            $this->visitor()->postJson('/challenge/leicht/hint');
+        }
+
+        $this->visitor()->getJson('/challenge/leicht')
+            ->assertJsonPath('attempt.status', 'in_progress')
+            ->assertJsonPath('result', null);
+
+        $this->visitor()->postJson('/challenge/leicht/give-up')->assertNotFound();
     }
 
     #[Test]
@@ -158,6 +164,36 @@ class PlayChallengeTest extends TestCase
             ->assertJsonPath('stats.average_seconds', 180);
 
         $this->assertSame(4, DailyChallenge::count());
+    }
+
+    #[Test]
+    public function the_dev_reset_only_clears_todays_progress_of_this_visitor(): void
+    {
+        config(['dailymath.dev_tools' => true]);
+        $daily = app(DailyChallengeService::class);
+        Question::factory()->count(2)->create();
+
+        $yesterday = $daily->forDate(CarbonImmutable::parse('2026-11-19'), Difficulty::Easy);
+        ChallengeAttempt::create(['daily_challenge_id' => $yesterday->id, 'visitor_id' => self::VISITOR, 'status' => AttemptStatus::Solved, 'attempts' => 1, 'started_at' => now(), 'finished_at' => now()]);
+
+        $this->visitor()->postJson('/challenge/leicht/answer', ['answer' => '7/12']);
+        $this->withCredentials()->withCookie(config('dailymath.visitor_cookie'), 'ffffffff-4c1d-4a7e-9f3b-2d5c8e1a7b40')
+            ->postJson('/challenge/leicht/hint');
+
+        $this->visitor()->from('/leicht')->post('/dev/reset')->assertRedirect('/leicht');
+
+        $this->assertSame(0, ChallengeAttempt::where('visitor_id', self::VISITOR)->where('daily_challenge_id', '!=', $yesterday->id)->count());
+        $this->assertSame(1, ChallengeAttempt::where('visitor_id', self::VISITOR)->where('daily_challenge_id', $yesterday->id)->count()); // gestern bleibt
+        $this->assertSame(1, ChallengeAttempt::where('visitor_id', 'ffffffff-4c1d-4a7e-9f3b-2d5c8e1a7b40')->count()); // andere Besucher bleiben
+    }
+
+    #[Test]
+    public function the_dev_reset_is_unavailable_without_dev_tools(): void
+    {
+        config(['dailymath.dev_tools' => false]);
+
+        $this->visitor()->post('/dev/reset')->assertNotFound();
+        $this->visitor()->get('/leicht')->assertDontSee('dev/reset');
     }
 
     private function createMediumAndHard(): void
@@ -221,11 +257,11 @@ class PlayChallengeTest extends TestCase
         $this->visitor()->postJson('/challenge/mittel/answer', ['answer' => '1']);
         $this->visitor()->postJson('/challenge/mittel/answer', ['answer' => '20']);
 
-        $share = $this->visitor()->postJson('/challenge/leicht/give-up')->json('result.share_text');
+        $share = $this->visitor()->postJson('/challenge/leicht/answer', ['answer' => '7/12'])->json('result.share_text');
 
-        $this->assertStringContainsString('🟢 Leicht', $share);
-        $this->assertStringContainsString('🟡 Mittel 🟥🟧', $share);
-        $this->assertStringContainsString('🔴 Schwer ⬜ offen', $share);
-        $this->assertStringContainsString('🔥 1 Tag Serie', $share); // ein gelöstes Niveau reicht für die Serie
+        $this->assertStringContainsString('🟢 Easy   🟧', $share);
+        $this->assertStringContainsString('🟡 Medium 🟥🟧', $share);
+        $this->assertStringContainsString('🔴 Hard   ⬜ open', $share);
+        $this->assertStringContainsString('🔥 1 day streak', $share); // ein gelöstes Niveau reicht für die Serie
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\AnswerType;
 use App\Enums\Difficulty;
 use App\Enums\Topic;
+use App\Models\Concerns\HasTranslations;
 use App\Questions\AnswerTypes\CheckResult;
 use Database\Factories\QuestionFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -12,11 +13,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['title', 'prompt', 'topic', 'difficulty', 'answer_type', 'answer', 'answer_meta', 'solution', 'background', 'is_active'])]
+#[Fillable(['slug', 'title', 'prompt', 'topic', 'difficulty', 'answer_type', 'answer', 'answer_meta', 'solution', 'background', 'translations', 'is_active'])]
 class Question extends Model
 {
     /** @use HasFactory<QuestionFactory> */
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected function casts(): array
     {
@@ -40,6 +41,16 @@ class Question extends Model
     public function dailyChallenges(): HasMany
     {
         return $this->hasMany(DailyChallenge::class);
+    }
+
+    /**
+     * Antwort-Metadaten (Platzhalter, Einheit, …) inkl. übersetzter Teile in der aktuellen Sprache.
+     *
+     * @return array<string, mixed>
+     */
+    public function localizedAnswerMeta(): array
+    {
+        return array_merge($this->answer_meta ?? [], $this->translations[app()->getLocale()]['answer_meta'] ?? []);
     }
 
     /**

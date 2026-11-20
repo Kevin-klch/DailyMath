@@ -36,15 +36,15 @@ class ChallengeStatePresenter
         $finished = $attempt->isFinished();
         $visibleHints = $finished ? $hints : $hints->take($attempt->hints_used);
         $stats = $this->statistics->forVisitor($attempt->visitor_id);
-        $meta = $question->answer_meta ?? [];
+        $meta = $question->localizedAnswerMeta();
         $day = $this->dayWithAttempts($challenge, $attempt->visitor_id);
 
         return [
             'challenge' => [
                 'number' => $challenge->number,
-                'date' => $challenge->challenge_date->locale('de')->isoFormat('dddd, D. MMMM YYYY'),
-                'title' => $question->title,
-                'prompt' => MathText::toHtml($question->prompt),
+                'date' => $challenge->challenge_date->locale(app()->getLocale())->isoFormat('dddd, LL'),
+                'title' => $question->translated('title'),
+                'prompt' => MathText::toHtml($question->translated('prompt')),
                 'topic' => $question->topic->label(),
                 'topic_key' => $question->topic->value,
                 'level' => $challenge->difficulty->slug(),
@@ -65,15 +65,15 @@ class ChallengeStatePresenter
             ],
             'hints' => $visibleHints->map(fn (QuestionHint $hint) => [
                 'position' => $hint->position,
-                'label' => $hint->label,
-                'content' => MathText::toHtml($hint->content),
+                'label' => $hint->translated('label'),
+                'content' => MathText::toHtml($hint->translated('content')),
             ])->values(),
             'check' => $check ? ['status' => $check->status->value, 'message' => $check->message] : null,
             'result' => $finished ? [
                 'solved' => $attempt->status === AttemptStatus::Solved,
                 'duration' => $attempt->durationInSeconds(),
-                'solution' => MathText::toHtml($question->solution),
-                'background' => MathText::toHtml($question->background),
+                'solution' => MathText::toHtml($question->translated('solution')),
+                'background' => MathText::toHtml($question->translated('background')),
                 'share_text' => $this->shareText($day, $stats['current_streak']),
             ] : null,
             // Übersicht der drei Niveaus des Tages für die Reiter
@@ -138,7 +138,7 @@ class ChallengeStatePresenter
             $prefix = $challenge->difficulty->shareIcon().' '.str_pad($challenge->difficulty->label(), 7);
 
             if (! $attempt?->isFinished()) {
-                $lines[] = $prefix.'⬜ offen';
+                $lines[] = $prefix.'⬜ '.__('open');
 
                 continue;
             }
@@ -151,7 +151,7 @@ class ChallengeStatePresenter
         }
 
         if ($streak > 0) {
-            $lines[] = "🔥 {$streak} ".($streak === 1 ? 'Tag' : 'Tage').' Serie';
+            $lines[] = '🔥 '.trans_choice(':count day streak|:count day streak', $streak);
         }
 
         $lines[] = url('/');

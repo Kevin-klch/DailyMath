@@ -112,7 +112,7 @@ class DailyChallengeTest extends TestCase
     public function there_is_no_challenge_without_questions(): void
     {
         $this->assertSame([], $this->daily->currentDay());
-        $this->get('/')->assertOk()->assertSee('Heute noch keine Aufgabe');
+        $this->get('/')->assertOk()->assertSee('No challenge yet today');
     }
 
     #[Test]

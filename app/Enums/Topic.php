@@ -14,12 +14,12 @@ enum Topic: string
     public function label(): string
     {
         return match ($this) {
-            self::Arithmetic => 'Grundrechenarten',
-            self::Fractions => 'Bruchrechnung',
-            self::Geometry => 'Geometrie',
-            self::Algebra => 'Algebra',
-            self::Analysis => 'Funktionen & Analysis',
-            self::Advanced => 'Weiterführende Mathematik',
+            self::Arithmetic => __('Arithmetic'),
+            self::Fractions => __('Fractions'),
+            self::Geometry => __('Geometry'),
+            self::Algebra => __('Algebra'),
+            self::Analysis => __('Functions & Calculus'),
+            self::Advanced => __('Advanced Mathematics'),
         };
     }
 }

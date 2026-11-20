@@ -7,7 +7,7 @@ class NumericAnswer extends AnswerChecker
     public function check(string|array $input, array $expected, array $meta = []): CheckResult
     {
         if (! is_string($input) || trim($input) === '') {
-            return CheckResult::invalid('Bitte gib eine Zahl ein.');
+            return CheckResult::invalid(__('Please enter a number.'));
         }
 
         $value = $this->parseNumber($input);

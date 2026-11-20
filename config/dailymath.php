@@ -17,4 +17,23 @@ return [
     */
     'plan_days' => 14,
 
+    /*
+    | Verfügbare Sprachen (Code => Name in der jeweiligen Sprache). Standard ist app.locale (en).
+    */
+    'locales' => [
+        'en' => 'English',
+        'de' => 'Deutsch',
+    ],
+
+    /*
+    | Name des Cookies mit der gewählten Sprache.
+    */
+    'locale_cookie' => 'dailymath_locale',
+
+    /*
+    | Übergangsweise Entwicklerwerkzeuge (z. B. der Reset-Button im Header).
+    | Standardmäßig nur lokal aktiv – in Produktion nie einschalten.
+    */
+    'dev_tools' => (bool) env('DAILYMATH_DEV_TOOLS', env('APP_ENV') === 'local'),
+
 ];

@@ -53,6 +53,6 @@ abstract class AnswerChecker
 
     protected function invalidNumber(): CheckResult
     {
-        return CheckResult::invalid('Bitte gib ein vereinfachtes Ergebnis ein, z. B. 3, -2,5, 7/12, 25π oder 3√2 – keine Rechnung.');
+        return CheckResult::invalid(__('Please enter a simplified result, e.g. 3, -2.5, 7/12, 25π or 3√2 – no calculations.'));
     }
 }
